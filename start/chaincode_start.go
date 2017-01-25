@@ -16,6 +16,13 @@ limitations under the License.
 
 package main
 
+// Dependencies =================================================
+
+/*
+fmt - contains Println for debugging/logging.
+errors - standard go error format.
+github.com/hyperledger/fabric/core/chaincode/shim - contains the definition for the chaincode interface and the chaincode stub, which you will need to interact with the ledger.
+*/
 import (
 	"errors"
 	"fmt"
@@ -27,9 +34,10 @@ import (
 type SimpleChaincode struct {
 }
 
-// ============================================================================================================================
+// =================================================================
 // Main
-// ============================================================================================================================
+// ==================================================================
+
 func main() {
 	err := shim.Start(new(SimpleChaincode))
 	if err != nil {
@@ -37,9 +45,27 @@ func main() {
 	}
 }
 
+/*
+Init is called when you first deploy your chaincode. As the name implies, this function should be used to do any initialization your chaincode needs.
+
+In our example, we use Init to configure the initial state of a single key/value pair on the ledger.
+
+In your chaincode_start.go file, change the Init function so that it stores the first element in the args argument to the key "hello_world".
+*/
+
+// func (t *SimpleChaincode) -
+// Function:
+// Init(, function string,
+// Input:
+// - stub: Take in a stub of type shim.ChaincodeStubInterface (from Hyperledger fabric)
+// - function string: Take a function name as string
+// - args []string: An array of args as type string
+// Output:
+// - []byte error: An array of bytes as type error
+
 // Init resets all the things
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-	if len(args) != 1 {
+	if len(args) != 1 { // If insufficient arguments
 		return nil, errors.New("Incorrect number of arguments. Expecting 1")
 	}
 
@@ -51,10 +77,10 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 	fmt.Println("invoke is running " + function)
 
 	// Handle different functions
-	if function == "init" {													//initialize the chaincode state, used as reset
+	if function == "init" { //initialize the chaincode state, used as reset
 		return t.Init(stub, "init", args)
 	}
-	fmt.Println("invoke did not find func: " + function)					//error
+	fmt.Println("invoke did not find func: " + function) //error
 
 	return nil, errors.New("Received unknown function invocation: " + function)
 }
@@ -64,11 +90,11 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 	fmt.Println("query is running " + function)
 
 	// Handle different functions
-	if function == "dummy_query" {											//read a variable
-		fmt.Println("hi there " + function)						//error
-		return nil, nil;
+	if function == "dummy_query" { //read a variable
+		fmt.Println("hi there " + function) //error
+		return nil, nil
 	}
-	fmt.Println("query did not find func: " + function)						//error
+	fmt.Println("query did not find func: " + function) //error
 
 	return nil, errors.New("Received unknown function query: " + function)
 }
